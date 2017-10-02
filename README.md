@@ -1,0 +1,2 @@
+# SRC-COOLOC-FRONT
+The COOLOC Project Front
