@@ -18,7 +18,6 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
 
-    "comma-dangle": ["error", "always-multiline"],
     "no-cond-assign": "error",
     "no-console": "off",
     "no-unused-expressions": "error",
@@ -26,7 +25,6 @@ module.exports = {
     "array-bracket-spacing": ["error", "never"],
     "block-spacing": ["error", "always"],
     "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
-    "camelcase": ["error", {"properties": "always"}],
     "comma-spacing": ["error", {"before": false, "after": true}],
     "comma-style": ["error", "last"],
     "computed-property-spacing": ["error", "never"],
@@ -40,14 +38,13 @@ module.exports = {
       "before": true,
       "after": true
     }],
-    "max-len": ["error", 80, 4, {"ignoreComments": true, "ignoreUrls": true,
+    "max-len": ["error", 120, 4, {"ignoreComments": true, "ignoreUrls": true,
       "ignorePattern": "^\\s*var\\s.+=\\s*require\\s*\\("}],
     "no-array-constructor": 2,
     "no-multiple-empty-lines": ["error", { "max": 1 }],
     "no-redeclare": ["error"],
     "no-trailing-spaces": 2,
-    "no-undef": "error",
-    "object-curly-spacing": ["error", "never"],
+    "object-curly-spacing": ["error", "always"],
     "one-var": ["error", {
       "initialized": "never",
       "uninitialized": "always"
@@ -58,7 +55,7 @@ module.exports = {
     "semi-spacing": ["error", {"before": false, "after": true}],
     "semi": ["error", "always"],
     "space-before-blocks": ["error", "always"],
-    "space-before-function-paren": ["error", "never"],
+    "space-before-function-paren": ["error", "always"],
     "space-in-parens": ["error", "never"],
     "space-infix-ops": ["error", {"int32Hint": false}],
     "spaced-comment": ["error", "always", {
