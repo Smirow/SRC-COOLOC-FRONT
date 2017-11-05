@@ -1,27 +1,32 @@
 <template>
-	<div id="wrapper">
-		<Topbar @display="changeSideBar" @hideSideBar="hideSideBar" ></Topbar>
-		<transition name="component-slide">
+	<div>
+		<NavigationBar @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
+		<!-- <transition name="component-slide">
 			<sidebar v-if="sidebarState"></sidebar>
-		</transition>
+		</transition> -->
 		<transition name="component-fade" mode="out-in">
-			<router-view v-if="sidebarState" class="content-page" id="app"></router-view>
-			<router-view v-else id="app"></router-view>
+			<div class="wrapper">
+        <div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+              <div class="page-title-box">
+							</div>
+          	</div>
+					</div>
+						<router-view id="app"></router-view>
+					</div>
+			</div>
 		</transition>
 	</div>
 </template>
 
 <script>
-import Topbar from './components/Topbar';
-import Sidebar from './components/Sidebar';
+import NavigationBar from './components/NavigationBar';
 
-import './assets/css/bootstrap.min.css';
-import './assets/css/icons.css';
 export default {
 	name: 'app',
 	components: {
-		Topbar,
-		Sidebar
+		NavigationBar
 	},
 	data: function () {
 		return {
@@ -39,7 +44,7 @@ export default {
 };
 </script>
 
-<style src="./assets/css/main.css"></style>
+
 <style lang="css">
 .component-fade-enter-active, .component-fade-leave-active {
   transition: opacity .3s ease;
@@ -56,6 +61,9 @@ export default {
 /* .component-fade-leave-active below version 2.1.8 */ {
   opacity: 0;
   transform: translateX(-100px);
+}
+.page-title-box {
+	padding: 10px 0;
 }
 
 </style>
