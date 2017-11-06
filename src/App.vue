@@ -1,23 +1,69 @@
 <template>
-	<div id="app">
-		<img src="./assets/logo.png">
-		<router-view></router-view>
+	<div>
+		<NavigationBar @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
+		<!-- <transition name="component-slide">
+			<sidebar v-if="sidebarState"></sidebar>
+		</transition> -->
+		<transition name="component-fade" mode="out-in">
+			<div class="wrapper">
+        <div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+              <div class="page-title-box">
+							</div>
+          	</div>
+					</div>
+						<router-view id="app"></router-view>
+					</div>
+			</div>
+		</transition>
 	</div>
 </template>
 
 <script>
+import NavigationBar from './components/NavigationBar';
+
 export default {
-	name: 'app'
+	name: 'app',
+	components: {
+		NavigationBar
+	},
+	data: function () {
+		return {
+			sidebarState: true
+		};
+	},
+	methods: {
+		changeSideBar () {
+			this.sidebarState = !this.sidebarState;
+		},
+		hideSideBar () {
+			this.sidebarState = false;
+		}
+	}
 };
 </script>
 
-<style>
-#app {
-	font-family: 'Avenir', Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
-	color: #2c3e50;
-	margin-top: 60px;
+
+<style lang="css">
+.component-fade-enter-active, .component-fade-leave-active {
+  transition: opacity .3s ease;
 }
+.component-fade-enter, .component-fade-leave-to
+/* .component-fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.component-slide-enter-active, .component-slide-leave-active {
+  transition: all 0.20s;
+}
+.component-slide-enter, .component-slide-leave-to
+/* .component-fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+.page-title-box {
+	padding: 10px 0;
+}
+
 </style>
