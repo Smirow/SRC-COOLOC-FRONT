@@ -62,7 +62,6 @@
 </template>
 
 <script>
-import { DonutChart, BarChart } from 'vue-morris';
 export default {
 	name: 'Login',
 	data () {
