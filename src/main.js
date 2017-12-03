@@ -3,6 +3,11 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import auth from './auth';
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
+
+auth.checkAuth();
 
 Vue.config.productionTip = false;
 

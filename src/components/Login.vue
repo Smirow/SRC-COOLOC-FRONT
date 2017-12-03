@@ -14,13 +14,13 @@
 
 								<div class="form-group ">
 										<div class="col-12">
-												<input class="form-control" type="text" required="" placeholder="Nom d'utilisateur">
+												<input class="form-control" type="text" required="" placeholder="Email" v-model="credentials.email">
 										</div>
 								</div>
 
 								<div class="form-group">
 										<div class="col-12">
-												<input class="form-control" type="password" required="" placeholder="Mot de passe">
+												<input class="form-control" type="password" required="" placeholder="Mot de passe" v-model="credentials.password">
 										</div>
 								</div>
 
@@ -36,10 +36,17 @@
 										</div>
 								</div>
 
+								<div v-if="error" class="form-group text-center m-t-40">
+										<div class="col-12">
+												{{ error }}
+										</div>
+								</div>
+
 								<div class="form-group text-center m-t-40">
 										<div class="col-12">
-												<router-link :to="{ name: 'Balance'}" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">se connecter</router-link>
-
+												<button class="btn btn-pink btn-block text-uppercase waves-effect waves-light" @click.prevent="login()">
+													Se connecter
+												</button>
 										</div>
 								</div>
 
@@ -62,10 +69,26 @@
 </template>
 
 <script>
+import auth from '../auth';
 export default {
 	name: 'Login',
 	data () {
-		return {};
+		return {
+			credentials: {
+				email: '',
+				password: ''
+			},
+			error: ''
+		};
+	},
+	methods: {
+		login: function () {
+			let credentials = {
+				email: this.credentials.email,
+				password: this.credentials.password
+			};
+			auth.login(this, credentials, 'Balance');
+		}
 	}
 };
 </script>
