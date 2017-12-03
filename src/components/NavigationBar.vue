@@ -50,11 +50,15 @@
 								<ul class="navigation-menu">
 
 										<li class="has-submenu">
-												<router-link :to="{ name: 'Balance'}"><i class="md md-insert-chart"></i>Balance</router-link>
+											<router-link :to="{ name: 'Balance'}"><i class="md md-insert-chart"></i>Balance</router-link>
 										</li>
 
 										<li class="has-submenu">
-													<router-link :to="{ name: 'Depenses'}"><i class="md md-credit-card"></i>Dépenses</router-link>
+											<router-link :to="{ name: 'Depenses'}"><i class="md md-credit-card"></i>Dépenses</router-link>
+										</li>
+
+										<li class="has-submenu">
+											<a  @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 										</li>
 
 
@@ -69,8 +73,13 @@
 </template>
 
 <script>
+import auth from '../auth';
 export default {
-
+	methods: {
+		logout () {
+			auth.logout('Login');
+		}
+	}
 };
 </script>
 
