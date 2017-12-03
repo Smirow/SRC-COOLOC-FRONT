@@ -33,10 +33,10 @@ export default {
 	signup (context, creds, redirect) {
 		context.$http.post(SIGNUP_URL, creds)
 		.then((data) => {
-			localStorage.setItem('userId', data.userId);
-			localStorage.setItem('access_token', data.id);
+			// localStorage.setItem('userId', data.userId);
+			// localStorage.setItem('access_token', data.id);
 
-			this.user.authenticated = true;
+			// this.user.authenticated = true;
 
 			if (redirect) {
 				router.push({ name: redirect });
