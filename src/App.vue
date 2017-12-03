@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<NavigationBar v-if="$route.name != 'Login' && $route.name != 'Signup'"  @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
+		<NavigationBar v-if="$route.name != 'Login' && $route.name != 'Signup' && $route.name != 'SignColoc'"  @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
 		<!-- <transition name="component-slide">
 			<sidebar v-if="sidebarState"></sidebar>
 		</transition> -->
