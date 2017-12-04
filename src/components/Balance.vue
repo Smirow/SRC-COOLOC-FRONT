@@ -90,6 +90,7 @@
 <script>
 import modalRembourse from './modalRembourse';
 import { DonutChart, BarChart } from 'vue-morris';
+import auth from '../auth';
 export default {
 	name: 'Balance',
 	components: {
@@ -111,7 +112,12 @@ export default {
 				{ cooloc: 'Théophile', balance: -226 },
 			]
 		};
-	}
+	},
+	beforeCreate () {
+		if (!auth.user.authenticated) {
+			this.$router.push('Login');
+		}
+	},
 };
 </script>
 

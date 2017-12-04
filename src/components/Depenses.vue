@@ -38,6 +38,7 @@
 
 <script>
 import modalDepenses from './modalDepense';
+import auth from '../auth';
 export default {
 	name: 'Depenses',
 	components: {
@@ -83,7 +84,12 @@ export default {
 				}
 			]
 		};
-	}
+	},
+	beforeCreate () {
+		if (!auth.user.authenticated) {
+			this.$router.push('Login');
+		}
+	},
 };
 </script>
 

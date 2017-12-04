@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<NavigationBar @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
+		<NavigationBar v-if="$route.name != 'Login' && $route.name != 'Signup' && $route.name != 'SignColoc'"  @display="changeSideBar" @hideSideBar="hideSideBar" ></NavigationBar>
 		<!-- <transition name="component-slide">
 			<sidebar v-if="sidebarState"></sidebar>
 		</transition> -->
 		<transition name="component-fade" mode="out-in">
 			<div class="wrapper">
         <div class="container-fluid">
-					<div class="row">
+					<div class="row" v-if="$route.name != 'Login' && $route.name != 'Signup'">
 						<div class="col-sm-12">
               <div class="page-title-box">
 							</div>
