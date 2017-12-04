@@ -75,29 +75,32 @@
 					<div>
 						<div>
 							<div class="form-group">
-								 <label class="col-2 col-form-label">Rembourser 225 € à Rémy</label>
-								<button type="button" class="pull-right btn-group btn-default waves-effect waves-light">Rembourser 225€</button>
+							  <label class="col-2 col-form-label">Rembourser 225 € à Rémy</label>
+								<button type="button" class="pull-right btn-group btn-default waves-effect waves-light" @click="showModal = true;">Rembourser 225€</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
+		<modalRembourse v-if="showModal" @close="showModal = false"></modalRembourse>
 	</div>
 </template>
 
 <script>
+import modalRembourse from './modalRembourse';
 import { DonutChart, BarChart } from 'vue-morris';
 import auth from '../auth';
 export default {
 	name: 'Balance',
 	components: {
 		DonutChart,
-		BarChart
+		BarChart,
+		modalRembourse
 	},
 	data () {
 		return {
+			showModal: false,
 			donutData: [
 				{ label: 'Alimentaire', value: 451 },
 				{ label: 'Ménage/Entretien', value: 40 },
