@@ -13,19 +13,24 @@
 
 						<div class="form-group ">
 							<div class="col-12">
-								<input class="form-control" type="email" required="" placeholder="Email">
+								<input class="form-control" type="email" required="" placeholder="Email" v-model="roommate.email">
 							</div>
 						</div>
 
 						<div class="form-group ">
 							<div class="col-12">
-								<input class="form-control" type="text" required="" placeholder="Username">
+								<input class="form-control" type="text" required="" placeholder="Username" v-model="roommate.username">
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-12">
-								<input class="form-control" type="password" required="" placeholder="Password">
+								<input class="form-control" type="password" required="" placeholder="Password" v-model="roommate.password">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-12">
+								<input class="form-control" type="password" required="" placeholder="Password Confirmation" v-model="roommate.passwordCheck">
 							</div>
 						</div>
 
@@ -38,9 +43,15 @@
 							</div>
 						</div>
 
+						<div v-if="error" class="form-group text-center m-t-40">
+							<div class="col-12">
+									{{ error }}
+							</div>
+						</div>
+
 						<div class="form-group text-center m-t-40">
 							<div class="col-12">
-								<router-link :to="{ name: 'Balance'}" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">S'inscrire</router-link>
+								<button class="btn btn-pink btn-block text-uppercase waves-effect waves-light" @click.prevent="signup()">S'inscrire</button>
 							</div>
 						</div>
 
@@ -60,10 +71,32 @@
 </template>
 
 <script>
+import auth from '../auth';
 export default {
 	name: 'Signup',
 	data () {
-		return {};
+		return {
+			roommate: {
+				email: '',
+				username: '',
+				password: ''
+			},
+			error: ''
+		};
+	},
+	methods: {
+		signup: function () {
+			if (this.roommate.password == this.roommate.passwordCheck) {
+				let credentials = {
+					email: this.roommate.email,
+					username: this.roommate.username,
+					password: this.roommate.password
+				};
+				auth.signup(this, credentials, 'Login');
+			} else {
+				this.error = 'Les mots de passe de correspondent pas.';
+			}
+		}
 	}
 };
 </script>
