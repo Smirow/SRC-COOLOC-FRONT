@@ -2,7 +2,8 @@
 	<div>
 	<div class="account-pages"></div>
 		<div class="clearfix"></div>
-		<div class="wrapper-page">
+			<div class="row">
+			<div class="col-6">
 			<div class="card-box">
 				<div class="panel-heading">
 					<h3 class="text-center"> Inscrire sa <strong class="text-custom">COOLOC</strong> </h3>
@@ -13,7 +14,7 @@
 
 						<div class="form-group ">
 							<div class="col-12">
-								<input class="form-control" type="nom" required="" placeholder="Nom">
+								<input v-model="colName" class="form-control" type="nom" required="" placeholder="Nom">
 							</div>
 						</div>
 					</br></br></br>
@@ -67,7 +68,39 @@
 			</div>
 
 		</div>
+		<div class="col-6">
+			<div class="wrapper-page">
+				<div class="card-box">
+					<div class="panel-heading">
+						<h3 class="text-center"> Vos invitations aux <strong class="text-custom">COOLOC</strong>s </h3>
+					</div>
+					</br>
+					</br>
+					</br>
+
+					<ul style="list-style-type: none;">
+						<li v-for="colloc in invits">
+							<div class="row">
+								<div class="col-9">
+									<p class="text-left">{{ colloc }}</p>
+								</div>
+								<div class="col-3">
+									<button class="remove" @click="">Accept</button>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+
+				</div>
+
+			</div>
+
+
+		</div>
 	</div>
+
+</div>
 </template>
 
 <script>
@@ -75,8 +108,10 @@ export default {
 	name: 'SignColoc',
 	data () {
 		return {
+			colName: '',
 			memberEmail: '',
-			members: []
+			members: [],
+			invits: ['Hitleroloc', 'KimJongoloc', 'Stalinoloc', 'Moussolinoloc']
 		};
 	}
 };
