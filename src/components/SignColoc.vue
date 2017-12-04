@@ -58,7 +58,7 @@
 
 						<div class="form-group text-center m-t-40">
 							<div class="col-12">
-								<router-link :to="{ name: 'Balance'}" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">Inscrire</router-link>
+								<button @click.prevent="signCol()" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">Inscrire</button>
 							</div>
 						</div>
 
@@ -104,6 +104,9 @@
 </template>
 
 <script>
+import config from '../config';
+import auth from '../config';
+
 export default {
 	name: 'SignColoc',
 	data () {
@@ -113,6 +116,19 @@ export default {
 			members: [],
 			invits: ['Hitleroloc', 'KimJongoloc', 'Stalinoloc', 'Moussolinoloc']
 		};
+	},
+	methods: {
+		signCol: function () {
+			let toPatch = {
+				colloc: colName
+			};
+			let toPost = {
+				name: colName
+			};
+			this.$http.post(config.url + 'Collocs', toPost);
+			this.$http.patch(config.url + 'RoomMate/' +  auth.getAuthId(), toSend, auth.getAuthHeader());
+		}
+
 	}
 };
 </script>
