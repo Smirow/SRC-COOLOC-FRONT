@@ -4,6 +4,7 @@ import Balance from '@/components/Balance';
 import Depenses from '@/components/Depenses';
 import Login from '@/components/Login';
 import Signup from '@/components/Signup';
+import SignColoc from '@/components/SignColoc';
 
 Vue.use(Router);
 
@@ -29,6 +30,11 @@ export default new Router({
 			path: '/signup',
 			name: 'Signup',
 			component: Signup
+		},
+		{
+			path: '/signcoloc',
+			name: 'SignColoc',
+			component: SignColoc
 		}
 	]
 });
