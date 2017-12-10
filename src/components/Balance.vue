@@ -91,6 +91,7 @@
 import modalRembourse from './modalRembourse';
 import { DonutChart, BarChart } from 'vue-morris';
 import auth from '../auth';
+import config from '../config';
 export default {
 	name: 'Balance',
 	components: {
@@ -117,6 +118,11 @@ export default {
 		if (!auth.user.authenticated) {
 			this.$router.push('Login');
 		}
+		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
+			if (!response.body.colloc) {
+				this.$router.push('SignColoc');
+			}
+		});
 	},
 };
 </script>

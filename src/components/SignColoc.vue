@@ -85,7 +85,7 @@
 									<p class="text-left">{{ colloc }}</p>
 								</div>
 								<div class="col-3">
-									<button class="remove" @click="">Accept</button>
+									<button class="remove" @click="acceptColloc(colloc)">Accept</button>
 								</div>
 							</div>
 						</li>
@@ -114,7 +114,7 @@ export default {
 			colName: '',
 			memberEmail: '',
 			members: [],
-			invits: ['Hitleroloc', 'KimJongoloc', 'Stalinoloc', 'Moussolinoloc']
+			invits: []
 		};
 	},
 	methods: {
@@ -137,8 +137,19 @@ export default {
 					console.log(response.body);
 				});
 			}
+		},
+		acceptColloc: function (colloc) {
+			let toPatch = {
+				colloc: this.acceptColloc
+			};
+			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
+			this.$router.push('/');
 		}
-
+	},
+	beforeCreate () {
+		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
+			this.invits = response.body.collocInv;
+		});
 	}
 };
 </script>
