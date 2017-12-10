@@ -137,6 +137,7 @@ export default {
 					console.log(response.body);
 				});
 			}
+			this.$router.push('/');
 		},
 		acceptColloc: function (colloc) {
 			let toPatch = {

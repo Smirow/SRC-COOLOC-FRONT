@@ -58,6 +58,10 @@
 										</li>
 
 										<li class="has-submenu">
+											<router-link :to="{ name: 'Compte'}"><i class="icon-emotsmile"></i>Mon compte</router-link>
+										</li>
+
+										<li class="has-submenu">
 											<a  @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 										</li>
 
