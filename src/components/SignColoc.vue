@@ -125,10 +125,18 @@ export default {
 			let toPost = {
 				name: this.colName
 			};
-
-			console.log(auth.getAuthId());
 			this.$http.post(config.url + 'Collocs', toPost);
 			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
+			for (var i in this.members) {
+				let query = {
+					filter: {
+						email: this.members[i]
+					}
+				};
+				this.$http.get(config.url + 'RoomMates/findOne', query, auth.getAuthHeader()).then(response => {
+					console.log(response.body);
+				});
+			}
 		}
 
 	}
