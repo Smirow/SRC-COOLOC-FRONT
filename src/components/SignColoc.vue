@@ -1,7 +1,7 @@
 <template>
 	<div>
 	<div class="account-pages"></div>
-		<div class="clearfix"></div>
+		<div class="clearfix"></div>		
 			<div class="row">
 			<div class="col-6">
 			<div class="card-box">
@@ -105,7 +105,7 @@
 
 <script>
 import config from '../config';
-import auth from '../config';
+import auth from '../auth';
 
 export default {
 	name: 'SignColoc',
@@ -120,13 +120,15 @@ export default {
 	methods: {
 		signCol: function () {
 			let toPatch = {
-				colloc: colName
+				colloc: this.colName
 			};
 			let toPost = {
-				name: colName
+				name: this.colName
 			};
+
+			console.log(auth.getAuthId());
 			this.$http.post(config.url + 'Collocs', toPost);
-			this.$http.patch(config.url + 'RoomMate/' +  auth.getAuthId(), toSend, auth.getAuthHeader());
+			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
 		}
 
 	}
