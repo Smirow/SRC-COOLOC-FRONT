@@ -1,7 +1,8 @@
 <template>
 	<div>
+	<a @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 	<div class="account-pages"></div>
-		<div class="clearfix"></div>		
+		<div class="clearfix"></div>
 			<div class="row">
 			<div class="col-6">
 			<div class="card-box">
@@ -145,6 +146,9 @@ export default {
 			};
 			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
 			this.$router.push('/');
+		},
+		logout () {
+			auth.logout('Login');
 		}
 	},
 	beforeCreate () {
