@@ -27,7 +27,7 @@ export default {
 			.then((data) => {
 				console.log(data);
 				if (!data.body.colloc) {
-					router.push({ name: SignColoc });
+					router.push({ name: 'SignColoc' });
 				}
 				localStorage.setItem('username', data.body.username);
 				localStorage.setItem('email', data.body.email);
@@ -38,7 +38,7 @@ export default {
 				})
 				.then((data) => {
 					if (!data.body.id) {
-						router.push({ name: SignColoc });
+						router.push({ name: 'SignColoc' });
 					}
 					localStorage.setItem('colloc', data.body.colloc);
 					if (redirect) {

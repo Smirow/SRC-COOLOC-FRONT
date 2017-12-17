@@ -1,6 +1,6 @@
 <template>
 	<div>
-	<a @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
+	<a @click.prevent="auth.logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 	<div class="account-pages"></div>
 		<div class="clearfix"></div>
 			<div class="row">
@@ -11,28 +11,28 @@
 				</div>
 
 				<div class="p-20">
-					<form class="form-horizontal m-t-20" action="http://coderthemes.com/ubold/dark_hori/index.html">
+					<form class="form-horizontal m-t-20">
 
 						<div class="form-group ">
 							<div class="col-12">
 								<input v-model="colName" class="form-control" type="nom" required="" placeholder="Nom">
 							</div>
 						</div>
-					</br></br></br>
+					<br><br><br>
 
 						<div class="panel-heading">
 							<h3 class="text-center"> Ajouter des <strong class="text-custom">COOLOC</strong>ataires </h3>
 						</div>
 
-						<div class="form-group ">
+						<div class="form-group p-20">
 							<div class="row">
-							<div class="col-8">
-								<input v-model="memberEmail" class="form-control" type="email" required="" placeholder="Email">
+								<div class="col-8">
+									<input v-model="memberEmail" class="form-control" type="email" required="" placeholder="Email">
+								</div>
+								<div class="col-4">
+									<a class="btn btn-pink btn-block text-uppercase waves-effect waves-light" @click="members.push(memberEmail)">Ajouter</a>
+								</div>
 							</div>
-							<div class="col-4">
-								<a class="btn btn-pink btn-block text-uppercase waves-effect waves-light" @click="members.push(memberEmail)">Ajouter</a>
-							</div>
-						</div>
 						</div>
 
 						<ul style="list-style-type: none;">
@@ -73,24 +73,23 @@
 			<div class="wrapper-page">
 				<div class="card-box">
 					<div class="panel-heading">
-						<h3 class="text-center"> Vos invitations aux <strong class="text-custom">COOLOC</strong>s </h3>
+						<h3 class="text-center"> Vos invitations aux <strong class="text-custom">COOLOC</strong>s</h3>
 					</div>
-					</br>
-					</br>
-					</br>
+					<br>
+					<br>
+					<br>
 
-					<ul style="list-style-type: none;">
-						<li v-for="colloc in invits">
-							<div class="row">
+						<ul v-for="invit in invits" style="list-style-type: none;" :key="invit.id">
+							<li><div class="row">
 								<div class="col-9">
-									<p class="text-left">{{ colloc }}</p>
+									<p class="text-left">{{ invit.collocName }}</p>
 								</div>
 								<div class="col-3">
-									<button class="remove" @click="acceptColloc(colloc)">Accept</button>
+									<button class="remove" @click="acceptColloc(invit.colloc)">Accept</button>
 								</div>
 							</div>
-						</li>
-					</ul>
+							</li>
+						</ul>
 
 
 				</div>
@@ -118,43 +117,51 @@ export default {
 			invits: []
 		};
 	},
+	created () {
+		this.fetchInvit();
+	},
 	methods: {
 		signCol: function () {
-			let toPatch = {
-				colloc: this.colName
-			};
 			let toPost = {
 				name: this.colName
 			};
-			this.$http.post(config.url + 'Collocs', toPost);
-			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
-			for (var i in this.members) {
-				let query = {
-					filter: {
-						email: this.members[i]
+
+			this.$http.post(config.url + 'Collocs', toPost)
+			.then((response) => {
+				let collocId = response.body.id;
+				for (let toInvite of this.members) {
+					this.$http.post(config.url + 'Collocs/' + collocId + '/' + 'invitation',
+						{ email: toInvite });
+				}
+				this.$http.post(config.url + 'RoomMates/' + auth.getAuthId() + '/setColloc',
+				{ collocId: collocId }, auth.getAuthHeader())
+				.then(() => { localStorage.setItem('colloc', collocId); this.$router.push('/'); })
+				.catch((err) => { console.log(err); });
+			})
+			.catch((err) => { console.log(err); });
+		},
+		acceptColloc: function (collocId) {
+			this.$http.post(config.url + 'RoomMates/' + auth.getAuthId() + '/setColloc',
+			{ collocId: collocId }, auth.getAuthHeader())
+			.then(() => { localStorage.setItem('colloc', collocId); this.$router.push('/'); })
+			.catch((err) => { console.log(err); });
+		},
+		fetchInvit: function () {
+			this.$http.get(config.url + 'invitations/?filter=%7B%22where%22%3A%20%7B%22email%22%3A%20%22' +
+			localStorage.getItem('email') + '%22%7D%7D')
+			.then((response) => {
+				for (let invit of response.body) {
+					if (invit.colloc) {
+						this.$http.get(config.url + 'Collocs/' + invit.colloc)
+						.then((data) => {
+							invit.collocName = data.body.name;
+							this.invits.push(invit);
+						});
 					}
-				};
-				this.$http.get(config.url + 'RoomMates/findOne', query, auth.getAuthHeader()).then(response => {
-					console.log(response.body);
-				});
-			}
-			this.$router.push('/');
-		},
-		acceptColloc: function (colloc) {
-			let toPatch = {
-				colloc: this.acceptColloc
-			};
-			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
-			this.$router.push('/');
-		},
-		logout () {
-			auth.logout('Login');
+				}
+			})
+			.catch((err) => { console.log(err); });
 		}
-	},
-	beforeCreate () {
-		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
-			this.invits = response.body.collocInv;
-		});
 	}
 };
 </script>
