@@ -118,6 +118,11 @@ export default {
 		if (!auth.user.authenticated) {
 			this.$router.push('Login');
 		}
+		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
+			if (!response.body.colloc) {
+				this.$router.push('SignColoc');
+			}
+		});
 	},
 	created: function () {
 		this.fetchDepenses(() => {

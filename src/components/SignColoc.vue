@@ -1,8 +1,10 @@
 <template>
 	<div>
+	<a @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 	<div class="account-pages"></div>
 		<div class="clearfix"></div>
-		<div class="wrapper-page">
+			<div class="row">
+			<div class="col-6">
 			<div class="card-box">
 				<div class="panel-heading">
 					<h3 class="text-center"> Inscrire sa <strong class="text-custom">COOLOC</strong> </h3>
@@ -13,7 +15,7 @@
 
 						<div class="form-group ">
 							<div class="col-12">
-								<input class="form-control" type="nom" required="" placeholder="Nom">
+								<input v-model="colName" class="form-control" type="nom" required="" placeholder="Nom">
 							</div>
 						</div>
 					</br></br></br>
@@ -57,7 +59,7 @@
 
 						<div class="form-group text-center m-t-40">
 							<div class="col-12">
-								<router-link :to="{ name: 'Balance'}" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">Inscrire</router-link>
+								<button @click.prevent="signCol()" class="btn btn-pink btn-block text-uppercase waves-effect waves-light">Inscrire</button>
 							</div>
 						</div>
 
@@ -67,17 +69,92 @@
 			</div>
 
 		</div>
+		<div class="col-6">
+			<div class="wrapper-page">
+				<div class="card-box">
+					<div class="panel-heading">
+						<h3 class="text-center"> Vos invitations aux <strong class="text-custom">COOLOC</strong>s </h3>
+					</div>
+					</br>
+					</br>
+					</br>
+
+					<ul style="list-style-type: none;">
+						<li v-for="colloc in invits">
+							<div class="row">
+								<div class="col-9">
+									<p class="text-left">{{ colloc }}</p>
+								</div>
+								<div class="col-3">
+									<button class="remove" @click="acceptColloc(colloc)">Accept</button>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+
+				</div>
+
+			</div>
+
+
+		</div>
 	</div>
+
+</div>
 </template>
 
 <script>
+import config from '../config';
+import auth from '../auth';
+
 export default {
 	name: 'SignColoc',
 	data () {
 		return {
+			colName: '',
 			memberEmail: '',
-			members: []
+			members: [],
+			invits: []
 		};
+	},
+	methods: {
+		signCol: function () {
+			let toPatch = {
+				colloc: this.colName
+			};
+			let toPost = {
+				name: this.colName
+			};
+			this.$http.post(config.url + 'Collocs', toPost);
+			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
+			for (var i in this.members) {
+				let query = {
+					filter: {
+						email: this.members[i]
+					}
+				};
+				this.$http.get(config.url + 'RoomMates/findOne', query, auth.getAuthHeader()).then(response => {
+					console.log(response.body);
+				});
+			}
+			this.$router.push('/');
+		},
+		acceptColloc: function (colloc) {
+			let toPatch = {
+				colloc: this.acceptColloc
+			};
+			this.$http.patch(config.url + 'RoomMates/' +  auth.getAuthId(), toPatch, auth.getAuthHeader());
+			this.$router.push('/');
+		},
+		logout () {
+			auth.logout('Login');
+		}
+	},
+	beforeCreate () {
+		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
+			this.invits = response.body.collocInv;
+		});
 	}
 };
 </script>
