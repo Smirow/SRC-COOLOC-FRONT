@@ -6,25 +6,26 @@
 							<h4 class="m-t-0 header-title">Dépenses <a class="pull-right md md-note-add" @click="showModal = true"></a></h4>
 							<table class="table">
 							<thead>
-								<tr>
-									<th>#</th>
+								<tr>									
 									<th>Créateur</th>
 									<th>Domaine</th>
 									<th>Description</th>
 									<th>Date</th>
 									<th>Participation(s)</th>
 									<th>Prix</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="depense in depenses" :key="depense.id">
-									<td>{{ depense.id }}</td>
+								<tr v-for="depense in depenses" :key="depense.id">															
 									<td>{{ depense.creatorUsername }}</td>
 									<td>{{ depense.domaine }}</td>
 									<td>{{ depense.description }}</td>
 									<td>{{ new Date(Date(depense.date)).getDate() + '/' + (new Date(Date(depense.date * 1000)).getMonth()+1) + '/' + new Date(Date(depense.date * 1000)).getFullYear()}}</td>
 									<td><span v-for="participation in depense.participations" v-if="participation.amount > 0" :key="participation.id" >{{participation.username}}: {{participation.amount}}€ </span></td>
 									<td>{{ depense.price }} €</td>
+									<td> <button class="btn btn-danger btn-rounded waves-effect waves-light" @click="deleteDep(depense.id)">Remove</button> </td>
+									
 								</tr>
 							</tbody>
 							</table>
@@ -92,6 +93,14 @@ export default {
 				return function __find (element) {
 					return element.id == id;
 				};
+			}
+		},
+		deleteDep: function (id_dep) {
+			this.$http.delete(config.url + 'Depenses/' + id_dep, auth.getAuthHeader());
+			for (var i in this.depenses) {
+				if (this.depenses[i].id == id_dep) {
+					this.depenses.splice(i, 1);
+				}
 			}
 		}
 	}
