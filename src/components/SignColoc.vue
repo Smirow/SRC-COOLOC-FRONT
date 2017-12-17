@@ -1,8 +1,7 @@
 <template>
 	<div>
-	<a @click.prevent="auth.logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
-	<div class="account-pages"></div>
 		<div class="clearfix"></div>
+		<a @click.prevent="logout()" ><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 			<div class="row">
 			<div class="col-6">
 			<div class="card-box">
@@ -161,6 +160,10 @@ export default {
 				}
 			})
 			.catch((err) => { console.log(err); });
+		},
+		logout () {
+			console.log('hey');
+			auth.logout('Login');
 		}
 	}
 };

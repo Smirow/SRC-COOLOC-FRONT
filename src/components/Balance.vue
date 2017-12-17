@@ -187,55 +187,85 @@ export default {
 			}
 			this.barData = barData;
 		},
-		remboursementsFunc: function () {
-			let remboursements = {};
+		balanceCalcul: function () {
+			let balance = {};
 			for (let depense of this.depenses) {
 				for (let participation of depense.participations) {
-					if (participation.solde != 0) {
-						if (!remboursements[participation.id]) remboursements[participation.id] = {};
-						if (!remboursements[participation.id][depense.creator]) {
-							remboursements[participation.id][depense.creator] = 0;
-						}
-						if (participation.solde) {
-							remboursements[participation.id][depense.creator] += participation.solde;
-						}
+					if (participation.solde > 0) {
+						if (!balance[participation.id]) balance[participation.id] = 0;
+						if (!balance[participation.creator]) balance[depense.creator] = 0;
+						balance[participation.id] += participation.solde;
+						balance[depense.creator] -= participation.solde;
+					}
+				}
+			}
+			return balance;
+		},
+		remboursementsFunc: function () {
+			let balance = this.balanceCalcul();
+			console.log(balance);
+			let ok = 0;
+			let remboursements = [];
+			while (!ok) {
+				console.log(balance);
+
+				let min = min_balance_index(balance);
+				// console.log("min : " + min);
+				let max = max_balance_index(balance);
+				// console.log("max : " + max);
+
+				let new_min;
+				if (Math.abs(balance[min]) < balance[max]) {
+					new_min = 0;
+				} else {
+					new_min = Math.abs(balance[min] + balance[max]);
+				}
+
+				balance[max] += (balance[min] + new_min);
+
+				// console.log(min + " rembourse " + (balance[min] + new_min) + " à " + max);
+				remboursements.push({
+					from: min,
+					to: max,
+					amount: Math.abs(balance[min] + new_min),
+					toName: this.findMateNameById(max) });
+
+				balance[min] = -new_min;
+
+				ok = 1;
+				for (let user in balance) {
+					if (Math.abs(balance[user]) != 0) {
+						ok = 0;
 					}
 				}
 			}
 
-			for (let mateFrom in remboursements) {
-				for (let mateTo in remboursements[mateFrom]) {
-					if (remboursements[mateFrom][mateTo] != 0 && remboursements[mateTo] &&
-							remboursements[mateTo][mateFrom] != 0) {
-						if (remboursements[mateFrom][mateTo] < remboursements[mateTo][mateFrom]) {
-							remboursements[mateFrom][mateTo] -= remboursements[mateTo][mateFrom];
-							remboursements[mateTo][mateFrom] = 0;
-						} else {
-							remboursements[mateTo][mateFrom] -= remboursements[mateFrom][mateTo];
-							remboursements[mateFrom][mateTo] = 0;
-						}
+			console.log(remboursements);
+			function min_balance_index (b) {
+				let min = 0;
+				let key = '';
+				for (let user in b) {
+					if (b[user] < min) {
+						min = b[user];
+						key = user;
 					}
 				}
+				return key;
 			}
 
-			let res = [];
-			for (let mateTo in remboursements[auth.getAuthId()]) {
-				res.push({
-					from: auth.getAuthId(),
-					to: mateTo,
-					amount: Math.abs(remboursements[auth.getAuthId()][mateTo]),
-					toName: this.findMateNameById(mateTo)
-				});
+			function max_balance_index (b) {
+				let max = 0;
+				let key = '';
+				for (let user in b) {
+					if (b[user] > max) {
+						max = b[user];
+						key = user;
+					}
+				}
+				return key;
 			}
-			// for (let mateFrom in remboursements) {
-			// 	for (let mateTo in remboursements[mateFrom]) {
-			// 		if (remboursements[mateFrom][mateTo] != 0) {
-			// 			res.push({ from: mateFrom, to: mateTo, amount: Math.abs(remboursements[mateFrom][mateTo]) });
-			// 		}
-			// 	}
-			// }
-			console.log(res);
-			this.remboursements = res;
+
+			this.remboursements = remboursements;
 		},
 		findMateNameById: function (id) {
 			return this.roomates.find(_find(id)).username;
