@@ -6,7 +6,7 @@
 							<h4 class="m-t-0 header-title">Dépenses <a class="pull-right md md-note-add" @click="showModal = true"></a></h4>
 							<table class="table">
 							<thead>
-								<tr>									
+								<tr>
 									<th>Créateur</th>
 									<th>Domaine</th>
 									<th>Description</th>
@@ -17,7 +17,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="depense in depenses" :key="depense.id">															
+								<tr v-for="depense in depenses" :key="depense.id">
 									<td>{{ depense.creatorUsername }}</td>
 									<td>{{ depense.domaine }}</td>
 									<td>{{ depense.description }}</td>
@@ -25,7 +25,7 @@
 									<td><span v-for="participation in depense.participations" v-if="participation.amount > 0" :key="participation.id" >{{participation.username}}: {{participation.amount}}€ </span></td>
 									<td>{{ depense.price }} €</td>
 									<td> <button class="btn btn-danger btn-rounded waves-effect waves-light" @click="deleteDep(depense.id)">Remove</button> </td>
-									
+
 								</tr>
 							</tbody>
 							</table>
@@ -56,7 +56,7 @@ export default {
 	beforeCreate () {
 		if (!auth.user.authenticated) {
 			this.$router.push('Login');
-		}
+		} else if (!auth.getCollocId()) this.$router.push({ name: 'SignColoc' });
 	},
 	created: function () {
 		this.fetchDepenses();

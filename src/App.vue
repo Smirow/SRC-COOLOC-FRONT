@@ -22,11 +22,16 @@
 
 <script>
 import NavigationBar from './components/NavigationBar';
-
+import auth from './auth';
 export default {
 	name: 'app',
 	components: {
 		NavigationBar
+	},
+	beforeCreate () {
+		if (!auth.user.authenticated) {
+			this.$router.push('Login');
+		} else if (!auth.getCollocId()) this.$router.push({ name: 'SignColoc' });
 	},
 	data: function () {
 		return {

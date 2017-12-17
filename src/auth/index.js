@@ -26,25 +26,28 @@ export default {
 			})
 			.then((data) => {
 				console.log(data);
-				if (!data.body.colloc) {
-					router.push({ name: 'SignColoc' });
-				}
 				localStorage.setItem('username', data.body.username);
 				localStorage.setItem('email', data.body.email);
-				context.$http.get(API_URL + 'RoomMates/' + localStorage.getItem('userId'), {
-					headers: {
-						'Authorization': localStorage.getItem('access_token')
-					}
-				})
-				.then((data) => {
-					if (!data.body.id) {
-						router.push({ name: 'SignColoc' });
-					}
+				if (!data.body.colloc) {
+					router.push({ name: 'SignColoc' });
+				} else {
 					localStorage.setItem('colloc', data.body.colloc);
-					if (redirect) {
-						router.push({ name: redirect });
-					}
-				}).catch((err) => { context.error = 'Erreur inconnue (' + err + ').'; });
+					router.push({ name: redirect });
+				}
+				// context.$http.get(API_URL + 'RoomMates/' + localStorage.getItem('userId'), {
+				// 	headers: {
+				// 		'Authorization': localStorage.getItem('access_token')
+				// 	}
+				// })
+				// .then((data) => {
+				// 	if (!data.body.id) {
+				// 		router.push({ name: 'SignColoc' });
+				// 	}
+				// 	localStorage.setItem('colloc', data.body.colloc);
+				// 	if (redirect) {
+				// 		router.push({ name: redirect });
+				// 	}
+				// }).catch((err) => { context.error = 'Erreur inconnue (' + err + ').'; });
 			}).catch((err) => { context.error = 'Erreur inconnue (' + err + ').'; });
 		})
 		.catch((err) => {
@@ -85,6 +88,15 @@ export default {
 
 	checkAuth () {
 		let jwt = localStorage.getItem('userId');
+		if (jwt) {
+			this.user.authenticated = true;
+		} else {
+			this.user.authenticated = false;
+		}
+	},
+
+	checkAuthColloc () {
+		let jwt = localStorage.getItem('colloc');
 		if (jwt) {
 			this.user.authenticated = true;
 		} else {

@@ -58,7 +58,7 @@ export default {
 	data () {
 		return {
 			pseudo: '',
-    		email: '',
+    	email: '',
 			collocName: '',
 			roomates: [],
 			inviteEmail: '',
@@ -73,13 +73,6 @@ export default {
 			this.$http.get(config.url + 'Collocs/' + response.body.colloc, auth.getAuthHeader())
 			.then(response => {
 				this.collocName = response.body.name;
-			});
-
-			this.$http.get(config.url + 'Collocs/' + response.body.colloc + '/room-mate', auth.getAuthHeader())
-			.then(response => {
-				for (var i in response.body) {
-					this.members.push(response.body[i].username);
-				}
 			});
 		});
 	},

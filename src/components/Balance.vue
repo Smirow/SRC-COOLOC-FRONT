@@ -117,12 +117,7 @@ export default {
 	beforeCreate () {
 		if (!auth.user.authenticated) {
 			this.$router.push('Login');
-		}
-		this.$http.get(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader()).then(response => {
-			if (!response.body.colloc) {
-				this.$router.push('SignColoc');
-			}
-		});
+		} else if (!auth.getCollocId()) this.$router.push({ name: 'SignColoc' });
 	},
 	created: function () {
 		this.fetchDepenses(() => {
@@ -201,7 +196,9 @@ export default {
 						if (!remboursements[participation.id][depense.creator]) {
 							remboursements[participation.id][depense.creator] = 0;
 						}
-						remboursements[participation.id][depense.creator] += participation.solde;
+						if (participation.solde) {
+							remboursements[participation.id][depense.creator] += participation.solde;
+						}
 					}
 				}
 			}
