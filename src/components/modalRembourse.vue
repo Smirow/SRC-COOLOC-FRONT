@@ -36,14 +36,17 @@ export default {
 	},
 	methods: {
 		rembourser: function () {
-			for (let depense of this.depenses) {
-				for (let participation of depense.participations) {
-					if (participation.id == this.remboursement.from && participation.solde < 0) {
-						participation.solde = 0;
-						this.rembourserDepense(depense);
-					}
-				}
-			}
+			var depense = {
+				creator: auth.getAuthId(),
+				creatorUsername: remboursement.from,
+				domaine: '',
+				description: 'Remboursement',
+				date: new Date(),
+				price: remboursement.amount,
+				participations: [{ id: remboursement.to, amount: remboursement.amount, solde: -remboursement.amount,
+					username: remboursement.toName }]
+			};
+			this.$http.post(config.url + 'collocs/' + auth.getCollocId() + '/depenses', depense);
 		},
 		rembourserDepense: function (depense) {
 			this.$http.patch(config.url + 'depenses/' + depense.id, depense)
