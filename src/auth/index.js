@@ -95,15 +95,6 @@ export default {
 		}
 	},
 
-	checkAuthColloc () {
-		let jwt = localStorage.getItem('colloc');
-		if (jwt) {
-			this.user.authenticated = true;
-		} else {
-			this.user.authenticated = false;
-		}
-	},
-
 	getAuthHeader () {
 		return {
 			headers: {
