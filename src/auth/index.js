@@ -19,9 +19,33 @@ export default {
 
 			this.user.authenticated = true;
 
-			if (redirect) {
-				router.push({ name: redirect });
-			}
+			context.$http.get(API_URL + 'RoomMates/' + localStorage.getItem('userId'), {
+				headers: {
+					'Authorization': localStorage.getItem('access_token')
+				}
+			})
+			.then((data) => {
+				console.log(data);
+				if (!data.body.colloc) {
+					router.push({ name: SignColoc });
+				}
+				localStorage.setItem('username', data.body.username);
+				localStorage.setItem('email', data.body.email);
+				context.$http.get(API_URL + 'RoomMates/' + localStorage.getItem('userId'), {
+					headers: {
+						'Authorization': localStorage.getItem('access_token')
+					}
+				})
+				.then((data) => {
+					if (!data.body.id) {
+						router.push({ name: SignColoc });
+					}
+					localStorage.setItem('colloc', data.body.colloc);
+					if (redirect) {
+						router.push({ name: redirect });
+					}
+				}).catch((err) => { context.error = 'Erreur inconnue (' + err + ').'; });
+			}).catch((err) => { context.error = 'Erreur inconnue (' + err + ').'; });
 		})
 		.catch((err) => {
 			if (err.status === 400) context.error = 'Merci de rentrer un identifiant et un mot de passe.';
@@ -49,6 +73,9 @@ export default {
 	logout (redirect) {
 		localStorage.removeItem('userId');
 		localStorage.removeItem('access_token');
+		localStorage.removeItem('colloc');
+		localStorage.removeItem('email');
+		localStorage.removeItem('username');
 		this.user.authenticated = false;
 
 		if (redirect) {
@@ -83,5 +110,9 @@ export default {
 
 	getAuthId () {
 		return localStorage.getItem('userId');
+	},
+
+	getCollocId () {
+		return localStorage.getItem('colloc');
 	}
 };

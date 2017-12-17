@@ -7,7 +7,7 @@
             <slot name="body">
               <div class="modal-body">
 									<div class="row">
-										<h3 class="col-md-12">Vous certifiez avoir envoyé 255€ à Rémy</h3>
+										<h3 class="col-md-12">Vous certifiez avoir envoyé {{remboursement.amount}}€ à {{remboursement.toName}}</h3>
 									</div>
 							</div>
             </slot>
@@ -16,7 +16,7 @@
           <div class="modal-footer">
             <slot name="footer">
 							<button type="button" class="btn btn-secondary waves-effect" @click="$emit('close')">Annuler</button>
-							<button type="button" class="btn btn-info waves-effect waves-light" @click="$emit('close')">J'ai remboursé</button>
+							<button type="button" class="btn btn-info waves-effect waves-light" @click.prevent="rembourser()">J'ai remboursé</button>
             </slot>
           </div>
         </div>
@@ -26,11 +26,31 @@
 </template>
 
 <script>
+import config from '../config';
 export default {
 	name: 'modalDepense',
+	props: ['remboursement', 'depenses'],
 	components: {},
 	data () {
 		return {};
+	},
+	methods: {
+		rembourser: function () {
+			for (let depense of this.depenses) {
+				for (let participation of depense.participations) {
+					if (participation.id == this.remboursement.from && participation.solde < 0) {
+						participation.solde = 0;
+						this.rembourserDepense(depense);
+					}
+				}
+			}
+		},
+		rembourserDepense: function (depense) {
+			this.$http.patch(config.url + 'depenses/' + depense.id, depense)
+			.then((data) => {
+				this.$emit('close'); this.$router.go(this.$router.currentRoute);
+			}).catch((err) => { console.log(err); });
+		}
 	}
 };
 </script>

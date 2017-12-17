@@ -12,19 +12,19 @@
 									<th>Domaine</th>
 									<th>Description</th>
 									<th>Date</th>
-									<th>Participant(s)</th>
+									<th>Participation(s)</th>
 									<th>Prix</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="depense in depenses" :key="depense.id">
 									<td>{{ depense.id }}</td>
-									<td>{{ depense.creator }}</td>
-									<td>{{ depense.domain }}</td>
+									<td>{{ depense.creatorUsername }}</td>
+									<td>{{ depense.domaine }}</td>
 									<td>{{ depense.description }}</td>
-									<td>{{ depense.date }}</td>
-									<td><span v-for="participant in depense.participants" :key="participant.id">{{participant.name}} : {{participant.percentage}}% </span></td>
-									<td>{{ depense.amount }}</td>
+									<td>{{ new Date(Date(depense.date)).getDate() + '/' + (new Date(Date(depense.date * 1000)).getMonth()+1) + '/' + new Date(Date(depense.date * 1000)).getFullYear()}}</td>
+									<td><span v-for="participation in depense.participations" v-if="participation.amount > 0" :key="participation.id" >{{participation.username}}: {{participation.amount}}€ </span></td>
+									<td>{{ depense.price }} €</td>
 								</tr>
 							</tbody>
 							</table>
@@ -39,6 +39,7 @@
 <script>
 import modalDepenses from './modalDepense';
 import auth from '../auth';
+import config from '../config';
 export default {
 	name: 'Depenses',
 	components: {
@@ -47,42 +48,8 @@ export default {
 	data () {
 		return {
 			showModal: false,
-			depenses: [
-				{
-					id: 1,
-					creator: 'Rémy',
-					date: '01/03/2000',
-					domain: 'Courses',
-					description: 'Courses Générales',
-					participants: [
-						{ id: 1, name: 'Magued', percentage: 50 },
-						{ id: 2, name: 'Rémy', percentage: 50 }
-					],
-					amount: 50
-				},
-				{
-					id: 2,
-					creator: 'Magued',
-					date: '02/03/2000',
-					domain: 'Courses',
-					description: 'Courses Générales',
-					participants: [
-						{ id: 1, name: 'Magued', percentage: 100 }
-					],
-					amount: 10
-				},
-				{
-					id: 3,
-					creator: 'Théophile',
-					date: '03/03/2000',
-					domain: 'Courses',
-					description: 'Courses Générales',
-					participants: [
-						{ id: 3, name: 'Théophile', percentage: 100 }
-					],
-					amount: 24
-				}
-			]
+			depenses: [],
+			roomMates: []
 		};
 	},
 	beforeCreate () {
@@ -90,6 +57,44 @@ export default {
 			this.$router.push('Login');
 		}
 	},
+	created: function () {
+		this.fetchDepenses();
+	},
+	methods: {
+		fetchDepenses: function () {
+			this.$http.get(config.url + 'collocs/' + auth.getCollocId() + '/depenses', auth.getAuthHeader())
+			.then((data) => {
+				this.depenses = data.body;
+				this.findUsernames();
+			}).catch((err) => {
+
+			});
+		},
+		fetchRoomMates: function () {
+			this.$http.get(config.url + 'collocs/' + auth.getCollocId() + '/room-mate', auth.getAuthHeader())
+			.then((data) => {
+				this.roomMates = data.body;
+				console.log(this.roomMates);
+			}).catch((err) => {
+
+			});
+		},
+		findUsernames: function () {
+			for (let depense of this.depenses) {
+				for (let participation of depense.participations) {
+					participation.username = findMateNameById(participation.id);
+				}
+			}
+		},
+		findMateNameById: function (id) {
+			return this.roomates.find(_find(id)).username;
+			function _find (id) {
+				return function __find (element) {
+					return element.id == id;
+				};
+			}
+		}
+	}
 };
 </script>
 
