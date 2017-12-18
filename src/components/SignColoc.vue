@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="clearfix"></div>
-		<a @click.prevent="logout()" ><i class="md md-exit-to-app"></i>Se Déconnecter</a>
+		<a style="cursor: pointer;" @click.prevent="logout()" ><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 			<div class="row">
 			<div class="col-6">
 			<div class="card-box">
