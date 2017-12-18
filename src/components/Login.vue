@@ -52,7 +52,7 @@
 
 								<div class="form-group m-t-30 m-b-0">
 										<div class="col-12">
-											<router-link :to="{ name: 'Forgot'}" class="text-dark"><i class="fa fa-lock m-r-5"></i>Mot de passe oublié ?</router-link>
+											<router-link :to="{ name: 'Login'}" class="text-dark"><i class="fa fa-lock m-r-5"></i>Mot de passe oublié ?</router-link>
 										</div>
 								</div>
 						</form>
