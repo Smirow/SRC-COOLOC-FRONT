@@ -159,11 +159,13 @@ export default {
 			this.donutData = [];
 			let donutDataDomain = [];
 			for (let depense of this.depenses) {
-				if (donutDataDomain.indexOf(depense.domaine) == -1) {
-					this.donutData.push({ label: depense.domaine, value: 0 });
-					donutDataDomain.push(depense.domaine);
+				if (depense.domaine != 'Remboursement') {
+					if (donutDataDomain.indexOf(depense.domaine) == -1) {
+						this.donutData.push({ label: depense.domaine, value: 0 });
+						donutDataDomain.push(depense.domaine);
+					}
+					this.donutData[donutDataDomain.indexOf(depense.domaine)].value += depense.price;
 				}
-				this.donutData[donutDataDomain.indexOf(depense.domaine)].value += depense.price;
 			}
 			console.log(this.donutData);
 		},
@@ -189,30 +191,29 @@ export default {
 		},
 		balanceCalcul: function () {
 			let balance = {};
+			for (let roomate of this.roomates) {
+				balance[roomate.id] = 0;
+			}
 			for (let depense of this.depenses) {
 				for (let participation of depense.participations) {
-					if (participation.solde > 0) {
-						if (!balance[participation.id]) balance[participation.id] = 0;
-						if (!balance[participation.creator]) balance[depense.creator] = 0;
-						balance[participation.id] += participation.solde;
-						balance[depense.creator] -= participation.solde;
-					}
+					if (balance[participation.id] == undefined) balance[participation.id] = 0;
+					if (!balance[participation.creator] == undefined) balance[depense.creator] = 0;
+					balance[participation.id] += participation.solde;
+					balance[depense.creator] -= participation.solde;
 				}
 			}
 			return balance;
 		},
 		remboursementsFunc: function () {
 			let balance = this.balanceCalcul();
-			console.log(balance);
 			let ok = 0;
 			let remboursements = [];
 			while (!ok) {
-				console.log(balance);
-
 				let min = min_balance_index(balance);
-				// console.log("min : " + min);
+				// console.log('min : ' + min);
 				let max = max_balance_index(balance);
-				// console.log("max : " + max);
+				// console.log('max : ' + max);
+				if (min == '' || max == '') break;
 
 				let new_min;
 				if (Math.abs(balance[min]) < balance[max]) {
@@ -223,31 +224,37 @@ export default {
 
 				balance[max] += (balance[min] + new_min);
 
-				// console.log(min + " rembourse " + (balance[min] + new_min) + " à " + max);
-				remboursements.push({
-					from: min,
-					to: max,
-					amount: Math.abs(balance[min] + new_min),
-					toName: this.findMateNameById(max) });
+				// console.log(min + ' rembourse ' + (balance[min] + new_min) + ' à ' + max);
+				if (min == auth.getAuthId()) {
+					remboursements.push({
+						from: min,
+						to: max,
+						amount: Math.abs(balance[min] + new_min),
+						toName: this.findMateNameById(max) });
+				}
 
 				balance[min] = -new_min;
 
 				ok = 1;
 				for (let user in balance) {
-					if (Math.abs(balance[user]) != 0) {
-						ok = 0;
+					if (balance.hasOwnProperty(user)) {
+						if (Math.abs(balance[user]) != 0) {
+							ok = 0;
+						}
 					}
 				}
 			}
 
-			console.log(remboursements);
+			// console.log(remboursements);
 			function min_balance_index (b) {
 				let min = 0;
 				let key = '';
 				for (let user in b) {
-					if (b[user] < min) {
-						min = b[user];
-						key = user;
+					if (b.hasOwnProperty(user)) {
+						if (b[user] < min) {
+							min = b[user];
+							key = user;
+						}
 					}
 				}
 				return key;
@@ -257,9 +264,11 @@ export default {
 				let max = 0;
 				let key = '';
 				for (let user in b) {
-					if (b[user] > max) {
-						max = b[user];
-						key = user;
+					if (b.hasOwnProperty(user)) {
+						if (b[user] > max) {
+							max = b[user];
+							key = user;
+						}
 					}
 				}
 				return key;
@@ -268,7 +277,7 @@ export default {
 			this.remboursements = remboursements;
 		},
 		findMateNameById: function (id) {
-			return this.roomates.find(_find(id)).username;
+			return this.roomates.find(_find(id)) && this.roomates.find(_find(id)).username;
 			function _find (id) {
 				return function __find (element) {
 					return element.id == id;
@@ -276,7 +285,6 @@ export default {
 			}
 		},
 		personalAndCollocDepense: function () {
-			console.log(this.depenses.length);
 			for (let depense of this.depenses) {
 				for (let participation of depense.participations) {
 					if (participation.id == auth.getAuthId()) {

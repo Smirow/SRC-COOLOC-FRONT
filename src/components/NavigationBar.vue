@@ -12,7 +12,7 @@
 				<!--</a>-->
 				<!-- Image Logo -->
 				<router-link :to="{ name: 'Balance'}" class="logo">
-					<h1>COOLOC</h1>
+					<h1 style="color: white">COOLOC</h1>
 						<!-- <img src="static/images/logo_dark.png" alt="" height="20" class="logo-lg">
 						<img src="static/images/logo_sm.png" alt="" height="24" class="logo-sm"> -->
 				</router-link>
@@ -62,7 +62,7 @@
 										</li>
 
 										<li class="has-submenu">
-											<a  @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
+											<a style="cursor: pointer;" @click.prevent="logout()"><i class="md md-exit-to-app"></i>Se Déconnecter</a>
 										</li>
 
 

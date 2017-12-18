@@ -27,6 +27,7 @@
 
 <script>
 import config from '../config';
+import auth from '../auth';
 export default {
 	name: 'modalDepense',
 	props: ['remboursement', 'depenses'],
@@ -36,14 +37,21 @@ export default {
 	},
 	methods: {
 		rembourser: function () {
-			for (let depense of this.depenses) {
-				for (let participation of depense.participations) {
-					if (participation.id == this.remboursement.from && participation.solde < 0) {
-						participation.solde = 0;
-						this.rembourserDepense(depense);
-					}
-				}
-			}
+			let depense = {
+				creator: auth.getAuthId(),
+				creatorUsername: localStorage.getItem('username'),
+				domaine: 'Remboursement',
+				description: 'Remboursement',
+				date: new Date(),
+				price: this.remboursement.amount,
+				participations: [{
+					id: this.remboursement.to,
+					amount: this.remboursement.amount,
+					solde: -this.remboursement.amount,
+					username: this.remboursement.toName }]
+			};
+			this.$http.post(config.url + 'collocs/' + auth.getCollocId() + '/depenses', depense)
+			.then(() => { this.$emit('close'); this.$router.go(this.$router.currentRoute); });
 		},
 		rembourserDepense: function (depense) {
 			this.$http.patch(config.url + 'depenses/' + depense.id, depense)
