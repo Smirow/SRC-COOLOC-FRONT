@@ -63,6 +63,7 @@ export default {
 			roomates: [],
 			inviteEmail: '',
 			inviteMessage: '',
+			balance: {}
 		};
 	},
 	beforeCreate () {
@@ -77,12 +78,35 @@ export default {
 		});
 	},
 	created () {
-		this.fetchRoomMates();
+		this.fetchDepenses(() => {
+			this.fetchRoomMates(() => {
+				this.balance = this.balanceCalcul();
+				console.log(this.balance);
+			});
+		});
 	},
 	methods: {
 		delAccount: function () {
-			this.$http.delete(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader());
-			auth.logout('Login');
+			if (this.balance[auth.getAuthId()] != 0) {
+				alert('Vous ne pouvez pas quitter la COOLOC avec une balance différente de zero.');
+			} else {
+				this.$http.patch(config.url + 'RoomMates/' + auth.getAuthId(), {
+					username: localStorage.getItem('username') + '(OLD)', email: auth.getAuthId() + '@old.fr' },
+				auth.getAuthHeader()).then(() => {}).catch((err) => { console.log(err); });
+				// this.$http.delete(config.url + 'RoomMates/' + auth.getAuthId(), auth.getAuthHeader());
+				auth.logout('Login');
+			}
+		},
+		fetchDepenses: function (cb) {
+			this.$http.get(config.url + 'collocs/' + auth.getCollocId() + '/depenses', auth.getAuthHeader())
+			.then((data) => {
+				this.depenses = data.body;
+				cb();
+				// this.donutData = this.donutDataFunc();
+				// console.log(this.donutData);
+			}).catch((err) => {
+				console.log(err);
+			});
 		},
 		fetchRoomMates: function (cb) {
 			this.$http.get(config.url + 'collocs/' + auth.getCollocId() + '/room-mate', auth.getAuthHeader())
@@ -112,7 +136,22 @@ export default {
 					return element.email == email;
 				};
 			}
-		}
+		},
+		balanceCalcul: function () {
+			let balance = {};
+			for (let roomate of this.roomates) {
+				balance[roomate.id] = 0;
+			}
+			for (let depense of this.depenses) {
+				for (let participation of depense.participations) {
+					if (balance[participation.id] == undefined) balance[participation.id] = 0;
+					if (!balance[participation.creator] == undefined) balance[depense.creator] = 0;
+					balance[participation.id] += participation.solde;
+					balance[depense.creator] -= participation.solde;
+				}
+			}
+			return balance;
+		},
 	}
 };
 </script>

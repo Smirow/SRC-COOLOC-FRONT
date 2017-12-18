@@ -145,7 +145,7 @@ export default {
 			this.$http.get(config.url + 'collocs/' + auth.getCollocId() + '/room-mate', auth.getAuthHeader())
 			.then((data) => {
 				this.roomates = data.body;
-				cb();
+				if (cb) cb();
 			}).catch((err) => {
 				console.log(err);
 			});
@@ -286,14 +286,16 @@ export default {
 		},
 		personalAndCollocDepense: function () {
 			for (let depense of this.depenses) {
-				for (let participation of depense.participations) {
-					if (participation.id == auth.getAuthId()) {
-						this.personalDepense++;
-						this.personalDepenseAmount += participation.amount;
+				if (depense.domaine != 'Remboursement') {
+					for (let participation of depense.participations) {
+						if (participation.id == auth.getAuthId()) {
+							this.personalDepense++;
+							this.personalDepenseAmount += participation.amount;
+						}
 					}
+					this.collocDepense++;
+					this.collocDepenseAmount += depense.price;
 				}
-				this.collocDepense++;
-				this.collocDepenseAmount += depense.price;
 			}
 		}
 	}
