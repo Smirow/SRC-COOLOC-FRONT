@@ -24,7 +24,7 @@
 									<td>{{ new Date(Date(depense.date)).getDate() + '/' + (new Date(Date(depense.date * 1000)).getMonth()+1) + '/' + new Date(Date(depense.date * 1000)).getFullYear()}}</td>
 									<td><span v-for="participation in depense.participations" v-if="participation.amount > 0" :key="participation.id" >{{participation.username}}: {{participation.amount}}€ </span></td>
 									<td>{{ depense.price }} €</td>
-									<td> <button class="btn btn-danger btn-rounded waves-effect waves-light" @click="deleteDep(depense.id)">Remove</button> </td>
+									<td> <a style="cursor: pointer; color: red" @click="deleteDep(depense.id)">Remove</a> </td>
 
 								</tr>
 							</tbody>
